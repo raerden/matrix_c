@@ -15,13 +15,14 @@ void print_matrix(matrix_t *A) {
         }
     }
 
-    printf("Matrix (%d x %d):\n", A->rows, A->columns);
+    printf("    Matrix (%d x %d):\n", A->rows, A->columns);
     for (int i = 0; i < A->rows; i++) {
         for (int j = 0; j < A->columns; j++) {
             printf("%*lf ", max_value_length, A->matrix[i][j]);
         }
         printf("\n");
     }
+    printf("\n");
 }
 
 int not_equal_size(matrix_t *A, matrix_t *B) {
@@ -32,8 +33,12 @@ int incorrect_matrix(matrix_t *A) {
     return A == NULL || A->matrix == NULL || A->rows <= 0 || A->columns <= 0;
 }
 
+double trunc_to_6(double a) {
+    return trunc(fabs(a) * SCALE_FACTOR_6 + ROUNDING_CORRECTION);
+}
+
 int equal_to_6_decimal(double a, double b) {
-    return trunc(a * 1e6) == trunc(b * 1e6);
+    return trunc_to_6(a) == trunc_to_6(b);
 }
 
 int inf_or_nan(matrix_t *A) {
