@@ -77,5 +77,8 @@ clang:
 
 run: all
 	@rm -rf ./a.out
-	@gcc -Werror work.c s21_matrix.a
+	@gcc -Werror work.c s21_matrix.a -lm
 	@./a.out
+
+mem: run
+	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./a.out
