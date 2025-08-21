@@ -2,11 +2,14 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
-GCOV_FLAGS = -Wno-coverage-invalid-line-number -fprofile-arcs -ftest-coverage
-UNAME := $(shell uname -s)
+GCOV_FLAGS = -fprofile-arcs -ftest-coverage
 CHECK_FLAGS = -lcheck -lm -lpthread
+UNAME := $(shell uname -s)
 ifeq ($(UNAME), Linux)
     CHECK_FLAGS += -lsubunit
+	OPEN_CMD:=xdg-open
+else ifeq ($(shell uname), Darwin)
+	OPEN_CMD:=open
 endif
 
 SRC = $(wildcard units/*.c)
@@ -25,23 +28,40 @@ REPORT_PATH = $(GCOV_DIR)/report/
 all: clean s21_matrix.a
 
 s21_matrix.a: $(OBJ)
-# 	@echo "*\c";
-	ar rcs $@ $^
-# 	@echo "*";
-	ranlib $@
+	@echo "*\c";
+	@ar rcs $@ $^
+	@echo "*\c";
+	@ranlib $@
 
 $(TEST_EXEC): $(OBJ) $(OBJ_TESTS)
-	$(CC) $(CFLAGS) -o $@ $^ $(CHECK_FLAGS) -lm
+	@$(CC) $(CFLAGS) -o $@ $^ $(CHECK_FLAGS)
 
 $(OBJ_DIR)/%.o: %.c
-	mkdir -p $(@D)
-# 	@echo "*\c";
-	$(CC) $(CFLAGS) -c $< -o $@
+	@mkdir -p $(@D)
+	@echo "*\c";
+	@$(CC) $(CFLAGS) -c $< -o $@
 
-test: all $(TEST_EXEC)
-# 	@echo "*";
-# 	@echo "Start of all the tests...\n"
-	./$(TEST_EXEC)
+buildtest: all $(TEST_EXEC)
+
+test: buildtest
+	@echo "*";
+	@echo "	\033[0;92mStart of all the tests...\033[0m"
+	@./$(TEST_EXEC)
+
+gcov_report: clean
+	mkdir -p $(GCOV_DIR)
+	$(CC) $(CFLAGS) $(GCOV_FLAGS) -o $(GCOV_DIR)/$(TEST_EXEC) $(SRC) $(TESTS_CHECK) $(CHECK_FLAGS)
+	./$(GCOV_DIR)/$(TEST_EXEC)
+	lcov -t "$(GCOV_DIR)/$(TEST_EXEC)" -o $(GCOV_DIR)/coverage.info -c -d .
+	lcov --remove $(GCOV_DIR)/coverage.info "*/tests/*" -o $(GCOV_DIR)/coverage.info --ignore-errors unused
+	genhtml -o $(REPORT_PATH) $(GCOV_DIR)/coverage.info
+	@echo "<table width="100%"><td class=\"title\" style=\"color: lightblue; -webkit-text-stroke: 1px black;\">#Project was made by woodsjul</td></table>" >> $(REPORT_PATH)index.html
+	@echo "=============================================="
+	@echo "Отчёт покрытия успешно сгенерирован!"
+	@echo "Откройте в браузере:"
+	@echo "file://$(CURDIR)/$(REPORT_PATH)index.html"
+	@echo "=============================================="
+	$(OPEN_CMD) ./$(REPORT_PATH)index.html
 
 clean:
 	@rm -rf $(GCOV_DIR) $(TEST_EXEC) 
@@ -56,6 +76,13 @@ clang:
 	clang-format -n *.h *.c units/*.c
 	clang-format -i *.h *.c units/*.c
 
+leaks: buildtest
+	leaks -atExit -- ./$(TEST_EXEC) 
+
+valgrind: buildtest
+	CK_FORK=no valgrind --vgdb=no --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./$(TEST_EXEC)
+
+
 run: all
 	@rm -rf ./a.out
 	@gcc -Werror work.c s21_matrix.a -lm
@@ -63,23 +90,5 @@ run: all
 
 mem: run
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./a.out
-
-gcov_report: CFLAGS += $(GCOV_FLAGS)
-gcov_report: clean
-	@mkdir -p $(GCOV_DIR)
-# 	@checkmk $(TESTS_CHECK) > $(UNIT_TEST_DIR)/$(TESTS_C)
-	@$(CC) $(CFLAGS) $(GCOV_FLAGS) $(UNIT_TEST_DIR)/$(TESTS_C) $(SRC) -o $(TEST_EXEC) $(CHECK_FLAGS)
-	@./$(TEST_EXEC)
-	@lcov -t "$(UNIT_TEST_DIR)/$(TEST_EXEC)" -o $(GCOV_DIR)/coverage.info -c -d . --exclude "*.check"
-	@lcov --remove $(GCOV_DIR)/coverage.info "*/unit_tests/*" -o $(GCOV_DIR)/coverage.info --ignore-errors unused
-	@genhtml -o $(REPORT_PATH) $(GCOV_DIR)/coverage.info
-	@echo "<table width="100%"><td class=\"title\" style=\"color: lightgreen; -webkit-text-stroke: 1px black;\">#Project was made by woodsjul</td></table>" >> $(REPORT_PATH)index.html
-	@echo "=============================================="
-	@echo "Отчёт покрытия успешно сгенерирован!"
-	@echo "Откройте в браузере:"
-	@echo "file://$(CURDIR)/$(REPORT_PATH)index.html"
-	@echo "=============================================="
-	@find "$(REPORT_PATH)src" -name "*.html" -type f -exec sh -c 'echo "<table width="100%"><td class=\"title\" style=\"color: lightgreen; -webkit-text-stroke: 1px black;\">#Project was made by woodsjul</td></table>" >> "$$1"' _ {} \;
-
 
 .PHONY: all clean test gcov_report
