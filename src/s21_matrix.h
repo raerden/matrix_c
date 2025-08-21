@@ -11,6 +11,20 @@
 #define SUCCESS 1
 #define FAILURE 0
 
+// для заполнения матриц значениями.
+#define FILL_MATRIX(mat, ...) \
+    do { \
+        double temp[] = __VA_ARGS__; \
+        int index = 0; \
+        for (int i = 0; i < (mat).rows; i++) { \
+            for (int j = 0; j < (mat).columns; j++) { \
+                if (index < sizeof(temp)/sizeof(temp[0])) { \
+                    (mat).matrix[i][j] = temp[index++]; \
+                } \
+            } \
+        } \
+    } while (0)
+
 typedef struct matrix_struct {
     double** matrix;
     int rows;

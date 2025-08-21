@@ -1,69 +1,50 @@
-#This project made by beedlesh haywoota woodsjul thymemas
+#This project made by woodsjul
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 GCOV_FLAGS = -Wno-coverage-invalid-line-number -fprofile-arcs -ftest-coverage
 UNAME := $(shell uname -s)
-LDFLAGS = -lcheck -lm -lpthread
+CHECK_FLAGS = -lcheck -lm -lpthread
 ifeq ($(UNAME), Linux)
-    LDFLAGS += -lsubunit
+    CHECK_FLAGS += -lsubunit
 endif
 
 SRC = $(wildcard units/*.c)
+SRC_TESTS = $(wildcard tests/*.c)
 
-UNIT_TEST_DIR = unit_tests
-TESTS_CHECK = $(wildcard $(UNIT_TEST_DIR)/*.check)
-TESTS_C = tests.c
-TEST_EXEC = tests.run
+UNIT_TEST_DIR = tests
+TESTS_CHECK = $(wildcard $(UNIT_TEST_DIR)/*.c)
+TEST_EXEC = tests_matrix
 
 OBJ_DIR = obj
 OBJ = $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC))
+OBJ_TESTS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_TESTS))
 GCOV_DIR = gcov_report
 REPORT_PATH = $(GCOV_DIR)/report/
 
 all: clean s21_matrix.a
 
 s21_matrix.a: $(OBJ)
-	@echo "*\c";
-	@ar rcs $@ $^
-	@echo "*";
-	@ranlib $@
+# 	@echo "*\c";
+	ar rcs $@ $^
+# 	@echo "*";
+	ranlib $@
 
-$(TEST_EXEC): 
-	@echo "*\c";
-	@checkmk $(TESTS_CHECK) > $(UNIT_TEST_DIR)/$(TESTS_C)
-	@echo "*\c";
-	@$(CC) $(CFLAGS) $(UNIT_TEST_DIR)/$(TESTS_C) -o $(UNIT_TEST_DIR)/$@ s21_matrix.a $(LDFLAGS)
-
-gcov_report: CFLAGS += $(GCOV_FLAGS)
-gcov_report: clean
-	@mkdir -p $(GCOV_DIR)
-	@checkmk $(TESTS_CHECK) > $(UNIT_TEST_DIR)/$(TESTS_C)
-	@$(CC) $(CFLAGS) $(GCOV_FLAGS) $(UNIT_TEST_DIR)/$(TESTS_C) $(SRC) -o $(GCOV_DIR)/$(TEST_EXEC) $(LDFLAGS)
-	@./$(GCOV_DIR)/$(TEST_EXEC)
-	@lcov -t "$(UNIT_TEST_DIR)/$(TEST_EXEC)" -o $(GCOV_DIR)/coverage.info -c -d . --exclude "*.check"
-	@lcov --remove $(GCOV_DIR)/coverage.info "*/unit_tests/*" -o $(GCOV_DIR)/coverage.info --ignore-errors unused
-	@genhtml -o $(REPORT_PATH) $(GCOV_DIR)/coverage.info
-	@echo "<table width="100%"><td class=\"title\" style=\"color: lightgreen; -webkit-text-stroke: 1px black;\">#Project was made by woodsjul</td></table>" >> $(REPORT_PATH)index.html
-	@echo "=============================================="
-	@echo "Отчёт покрытия успешно сгенерирован!"
-	@echo "Откройте в браузере:"
-	@echo "file://$(CURDIR)/$(REPORT_PATH)index.html"
-	@echo "=============================================="
-	@find "$(REPORT_PATH)src" -name "*.html" -type f -exec sh -c 'echo "<table width="100%"><td class=\"title\" style=\"color: lightgreen; -webkit-text-stroke: 1px black;\">#Project was made by woodsjul</td></table>" >> "$$1"' _ {} \;
+$(TEST_EXEC): $(OBJ) $(OBJ_TESTS)
+	$(CC) $(CFLAGS) -o $@ $^ $(CHECK_FLAGS) -lm
 
 $(OBJ_DIR)/%.o: %.c
-	@mkdir -p $(@D)
-	@echo "*\c";
-	@$(CC) $(CFLAGS) -c $< -o $@
+	mkdir -p $(@D)
+# 	@echo "*\c";
+	$(CC) $(CFLAGS) -c $< -o $@
 
 test: all $(TEST_EXEC)
-	@echo "*";
-	@echo "Start of all the tests...\n"
-	@./$(UNIT_TEST_DIR)/$(TEST_EXEC)
+# 	@echo "*";
+# 	@echo "Start of all the tests...\n"
+	./$(TEST_EXEC)
 
 clean:
-	@rm -rf $(GCOV_DIR) $(UNIT_TEST_DIR)/$(TESTS_C) $(UNIT_TEST_DIR)/$(TEST_EXEC) 
+	@rm -rf $(GCOV_DIR) $(TEST_EXEC) 
 	@rm -rf $(OBJ_DIR) s21_matrix.a
 
 cpptest:
@@ -82,3 +63,23 @@ run: all
 
 mem: run
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./a.out
+
+gcov_report: CFLAGS += $(GCOV_FLAGS)
+gcov_report: clean
+	@mkdir -p $(GCOV_DIR)
+# 	@checkmk $(TESTS_CHECK) > $(UNIT_TEST_DIR)/$(TESTS_C)
+	@$(CC) $(CFLAGS) $(GCOV_FLAGS) $(UNIT_TEST_DIR)/$(TESTS_C) $(SRC) -o $(TEST_EXEC) $(CHECK_FLAGS)
+	@./$(TEST_EXEC)
+	@lcov -t "$(UNIT_TEST_DIR)/$(TEST_EXEC)" -o $(GCOV_DIR)/coverage.info -c -d . --exclude "*.check"
+	@lcov --remove $(GCOV_DIR)/coverage.info "*/unit_tests/*" -o $(GCOV_DIR)/coverage.info --ignore-errors unused
+	@genhtml -o $(REPORT_PATH) $(GCOV_DIR)/coverage.info
+	@echo "<table width="100%"><td class=\"title\" style=\"color: lightgreen; -webkit-text-stroke: 1px black;\">#Project was made by woodsjul</td></table>" >> $(REPORT_PATH)index.html
+	@echo "=============================================="
+	@echo "Отчёт покрытия успешно сгенерирован!"
+	@echo "Откройте в браузере:"
+	@echo "file://$(CURDIR)/$(REPORT_PATH)index.html"
+	@echo "=============================================="
+	@find "$(REPORT_PATH)src" -name "*.html" -type f -exec sh -c 'echo "<table width="100%"><td class=\"title\" style=\"color: lightgreen; -webkit-text-stroke: 1px black;\">#Project was made by woodsjul</td></table>" >> "$$1"' _ {} \;
+
+
+.PHONY: all clean test gcov_report

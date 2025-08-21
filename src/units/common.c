@@ -30,7 +30,11 @@ int not_equal_size(matrix_t *A, matrix_t *B) {
 }
 
 int incorrect_matrix(matrix_t *A) {
-    return A == NULL || A->matrix == NULL || A->rows <= 0 || A->columns <= 0;
+    int res = (A == NULL || A->matrix == NULL || A->rows <= 0 || A->columns <= 0);
+    for (int i = 0; i < A->rows && res == 0; i++)
+        if (A->matrix[i] == NULL)
+            res = 1;
+    return res;
 }
 
 double trunc_to_6(double a) {
