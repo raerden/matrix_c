@@ -58,4 +58,27 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
 }
 
 // Умножение матриц
-int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result);
+int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
+    if (incorrect_matrix(A) || incorrect_matrix(B) || result == NULL) 
+        return INCORRECT_MATRIX;
+
+    int res = OK;
+
+    if (A->rows != B->columns || inf_or_nan(A) || inf_or_nan(B)) {
+        res = CALCULATION_ERROR;
+    } else {
+        res = s21_create_matrix(A->rows, B->columns, result);
+    }
+
+    for (int i = 0; res == OK && i < A->rows; i++) {
+        for (int j = 0; j < B->columns; j++) {
+            for (int k = 0; k < B->rows; k++) {
+                result->matrix[i][j] += A->matrix[i][k] * B->matrix[k][j];
+            }
+        }
+    }
+
+    if (res == OK)
+        res = inf_or_nan(result) ? CALCULATION_ERROR : OK; 
+    return res;
+}
