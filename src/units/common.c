@@ -1,7 +1,7 @@
 #include "../s21_matrix.h"
 #include <string.h>
 
-void print_matrix(matrix_t *A) {
+void print_matrix(matrix_t *A, int dec) {
     if (A == NULL || A->matrix == NULL) {
         printf("print_matrix: Matrix is NULL\n");
         return;
@@ -10,15 +10,22 @@ void print_matrix(matrix_t *A) {
     unsigned max_value_length = 0;
     for (int i = 0; i < A->rows; i++) {
         for (int j = 0; j < A->columns; j++) {
-            if (max_value_length < A->matrix[i][j])
-                max_value_length = (unsigned)snprintf(NULL, 0, "%lf", A->matrix[i][j]);
+            if (max_value_length < A->matrix[i][j]) {
+                if (dec)
+                    max_value_length = (unsigned)snprintf(NULL, 0, "%.0lf", A->matrix[i][j]);
+                else 
+                    max_value_length = (unsigned)snprintf(NULL, 0, "%lf", A->matrix[i][j]);
+            }
         }
     }
 
-    printf("    Matrix (%d x %d):\n", A->rows, A->columns);
+    printf("    Matrix (%d i %d):\n", A->rows, A->columns);
     for (int i = 0; i < A->rows; i++) {
         for (int j = 0; j < A->columns; j++) {
-            printf("%*lf ", max_value_length, A->matrix[i][j]);
+            if (dec)
+                printf("%*.0lf ", max_value_length, A->matrix[i][j]);
+            else
+                printf("%*lf ", max_value_length, A->matrix[i][j]);
         }
         printf("\n");
     }
@@ -30,11 +37,11 @@ int not_equal_size(matrix_t *A, matrix_t *B) {
 }
 
 int incorrect_matrix(matrix_t *A) {
-    int res = (A == NULL || A->matrix == NULL || A->rows <= 0 || A->columns <= 0);
-    for (int i = 0; i < A->rows && res == 0; i++)
+    int result_code = (A == NULL || A->matrix == NULL || A->rows <= 0 || A->columns <= 0);
+    for (int i = 0; i < A->rows && result_code == 0; i++)
         if (A->matrix[i] == NULL)
-            res = 1;
-    return res;
+            result_code = 1;
+    return result_code;
 }
 
 double trunc_to_6(double a) {
@@ -46,15 +53,55 @@ int equal_to_6_decimal(double a, double b) {
 }
 
 int inf_or_nan(matrix_t *A) {
-    int res = 0;
+    int result_code = 0;
     for (int i = 0; i < A->rows; i++) {
         for (int j = 0; j < A->columns; j++) {
             if (isnan(A->matrix[i][j]) || isinf(A->matrix[i][j])) {
-                res = 1;
+                result_code = 1;
                 j = A->columns;
                 i = A->rows;
             }
         }
     }
-    return res;
+    return result_code;
+}
+
+// Определитель для небольших матриц
+double calc_determinant1_2_3(matrix_t *A) {
+    double det;
+    if (A->rows == 1) {
+        det = A->matrix[0][0];
+    }
+    else if (A->rows == 2) {
+        det = A->matrix[0][0] * A->matrix[1][1] - \
+              A->matrix[0][1] * A->matrix[1][0];
+    }
+    else if (A->rows == 3) {
+        // по правилу треугольника (Саррюса)
+        det = (A->matrix[0][0] * A->matrix[1][1] * A->matrix[2][2] + \
+               A->matrix[0][1] * A->matrix[1][2] * A->matrix[2][0] + \
+               A->matrix[0][2] * A->matrix[1][0] * A->matrix[2][1])- \
+              (A->matrix[0][2] * A->matrix[1][1] * A->matrix[2][0] + \
+               A->matrix[0][0] * A->matrix[1][2] * A->matrix[2][1] + \
+               A->matrix[0][1] * A->matrix[1][0] * A->matrix[2][2]);
+    }
+    return det;
+}
+
+// Создает новую матрицу n-1. Вырезаем из исходной указанный row, column
+int remove_row_column(matrix_t *A, int i, int j, matrix_t *M) {
+    int result_code = OK;
+    result_code = s21_create_matrix(A->rows - 1, A->rows - 1, M);
+    int iM = 0;
+    for (int x = 0; result_code == OK && x < A->rows; x++) {
+        int jM = 0;
+        for (int y = 0; y < A->columns && x != i; y++) {
+            if (y != j) {
+                M->matrix[iM][jM] = A->matrix[x][y];
+                jM++;
+            }
+        }
+        if (x != i) iM++;
+    }
+    return result_code;
 }

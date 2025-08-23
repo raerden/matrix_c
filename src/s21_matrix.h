@@ -16,10 +16,10 @@
     do { \
         double temp[] = __VA_ARGS__; \
         int index = 0; \
-        for (int i = 0; i < (mat).rows; i++) { \
-            for (int j = 0; j < (mat).columns; j++) { \
+        for (int x = 0; x < (mat).rows; x++) { \
+            for (int y = 0; y < (mat).columns; y++) { \
                 if (index < sizeof(temp)/sizeof(temp[0])) { \
-                    (mat).matrix[i][j] = temp[index++]; \
+                    (mat).matrix[x][y] = temp[index++]; \
                 } \
             } \
         } \
@@ -71,10 +71,12 @@ int s21_determinant(matrix_t *A, double *result);
 int s21_inverse_matrix(matrix_t *A, matrix_t *result);
 
 // Вспомогательные функции
-void print_matrix(matrix_t *A);
+void print_matrix(matrix_t *A, int dec);
 int incorrect_matrix(matrix_t *A);
 int not_equal_size(matrix_t *A, matrix_t *B);
 int equal_to_6_decimal(double a, double b);
 int inf_or_nan(matrix_t *A);
+double calc_determinant1_2_3(matrix_t *A);
+int remove_row_column(matrix_t *A, int i, int j, matrix_t *M);
 
 #endif

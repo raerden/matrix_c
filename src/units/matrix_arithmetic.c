@@ -3,7 +3,7 @@
 void sum_sub(matrix_t *A, matrix_t *B, matrix_t *result, int operation) {
     for (int i = 0; i < A->rows; i++) {
         for (int j = 0; j < A->columns; j++) {
-            if (operation == 0)
+            if (operation)
                 result->matrix[i][j] = A->matrix[i][j] + B->matrix[i][j];
             else
                 result->matrix[i][j] = A->matrix[i][j] - B->matrix[i][j];
@@ -15,46 +15,46 @@ int simple_arithmetic(matrix_t *A, matrix_t *B, matrix_t *result, int operation)
     if (incorrect_matrix(A) || incorrect_matrix(B) || result == NULL) 
         return INCORRECT_MATRIX;
     
-    int res = OK;
+    int result_code = OK;
     if (not_equal_size(A, B) || inf_or_nan(A) || inf_or_nan(B)) {
-        res = CALCULATION_ERROR;
+        result_code = CALCULATION_ERROR;
     } else {
-        res = s21_create_matrix(A->rows, A->columns, result);
-        if (res == OK) {
+        result_code = s21_create_matrix(A->rows, A->columns, result);
+        if (result_code == OK) {
             sum_sub(A, B, result, operation);
         }
     }
     
-    return res;
+    return result_code;
 }
 
 // Сложение матриц
 int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result){
-    return simple_arithmetic(A, B, result, 0);
+    return simple_arithmetic(A, B, result, 1);
 }
 
 // Вычитание матриц
 int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result){
-    return simple_arithmetic(A, B, result, 1);
+    return simple_arithmetic(A, B, result, 0);
 }
 
 // Умножение матрицы на число
 int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
     if (incorrect_matrix(A) || result == NULL) return INCORRECT_MATRIX;
     
-    int res = OK;
+    int result_code = OK;
     if (inf_or_nan(A)) {
-        res = CALCULATION_ERROR;
+        result_code = CALCULATION_ERROR;
     } else {
-        res = s21_create_matrix(A->rows, A->columns, result);
-        for (int i = 0; i < A->rows && res == OK; i++) {
+        result_code = s21_create_matrix(A->rows, A->columns, result);
+        for (int i = 0; i < A->rows && result_code == OK; i++) {
             for (int j = 0; j < A->columns; j++) {
                 result->matrix[i][j] = A->matrix[i][j] * number;
             }
         }
     }
     
-    return res;
+    return result_code;
 }
 
 // Умножение матриц
@@ -62,15 +62,15 @@ int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
     if (incorrect_matrix(A) || incorrect_matrix(B) || result == NULL) 
         return INCORRECT_MATRIX;
 
-    int res = OK;
+    int result_code = OK;
 
     if (A->rows != B->columns || inf_or_nan(A) || inf_or_nan(B)) {
-        res = CALCULATION_ERROR;
+        result_code = CALCULATION_ERROR;
     } else {
-        res = s21_create_matrix(A->rows, B->columns, result);
+        result_code = s21_create_matrix(A->rows, B->columns, result);
     }
 
-    for (int i = 0; res == OK && i < A->rows; i++) {
+    for (int i = 0; result_code == OK && i < A->rows; i++) {
         for (int j = 0; j < B->columns; j++) {
             for (int k = 0; k < B->rows; k++) {
                 result->matrix[i][j] += A->matrix[i][k] * B->matrix[k][j];
@@ -78,7 +78,7 @@ int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
         }
     }
 
-    if (res == OK)
-        res = inf_or_nan(result) ? CALCULATION_ERROR : OK; 
-    return res;
+    if (result_code == OK)
+        result_code = inf_or_nan(result) ? CALCULATION_ERROR : OK; 
+    return result_code;
 }

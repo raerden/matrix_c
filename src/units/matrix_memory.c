@@ -6,23 +6,23 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
         return INCORRECT_MATRIX;
     }
 
-    int res = OK;
+    int result_code = OK;
     result->matrix = (double **)calloc(rows, sizeof(double *));
 
     if (result->matrix == NULL) {
-        res = INCORRECT_MATRIX;
+        result_code = INCORRECT_MATRIX;
     }
 
     int columns_allocated = 0;
-    for (int i = 0; i < rows && res == OK; i++) {
+    for (int i = 0; i < rows && result_code == OK; i++) {
         result->matrix[i] = (double *)calloc(columns, sizeof(double));
         if (result->matrix[i] == NULL) {
-            res = INCORRECT_MATRIX;
+            result_code = INCORRECT_MATRIX;
         }
         columns_allocated++;
     }
 
-    if (res != OK) {
+    if (result_code != OK) {
         for (int i = 0; i < columns_allocated; i++) {
             if (result->matrix[i] != NULL) {
                 free(result->matrix[i]);
@@ -38,7 +38,7 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
         result->columns = columns;
     }
 
-    return res;
+    return result_code;
 }
 
 // Очистка матрицы
