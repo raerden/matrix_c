@@ -101,11 +101,32 @@ int calc_determ_by_matrixU(matrix_t *A, double *det) {
         }
     }
     if (*det != 0)
-        *det = (int)matrix_prime_diag_mul(&U) * sign;
+        *det = matrix_prime_diag_mul(&U) * sign;
     s21_remove_matrix(&U);
     return result_code;
 }
 
+// Определитель для небольших матриц
+double calc_determinant1_2_3(matrix_t *A) {
+    double det;
+    if (A->rows == 1) {
+        det = A->matrix[0][0];
+    }
+    else if (A->rows == 2) {
+        det = A->matrix[0][0] * A->matrix[1][1] - \
+              A->matrix[0][1] * A->matrix[1][0];
+    }
+    else if (A->rows == 3) {
+        // по правилу треугольника (Саррюса)
+        det = (A->matrix[0][0] * A->matrix[1][1] * A->matrix[2][2] + \
+               A->matrix[0][1] * A->matrix[1][2] * A->matrix[2][0] + \
+               A->matrix[0][2] * A->matrix[1][0] * A->matrix[2][1])- \
+              (A->matrix[0][2] * A->matrix[1][1] * A->matrix[2][0] + \
+               A->matrix[0][0] * A->matrix[1][2] * A->matrix[2][1] + \
+               A->matrix[0][1] * A->matrix[1][0] * A->matrix[2][2]);
+    }
+    return det;
+}
 
 // Определитель матрицы (determinant)
 int s21_determinant(matrix_t *A, double *result) {
@@ -188,7 +209,7 @@ int calc_determ_by_matrixU(matrix_t *A, double *det) {
     print_matrix(&U, 1);
     printf("определитель %d sign=%d\n", (int)matrix_prime_diag_mul(&U) * sign, sign);
     if (*det != 0)
-        *det = (int)matrix_prime_diag_mul(&U) * sign;
+        *det = matrix_prime_diag_mul(&U) * sign;
     s21_remove_matrix(&U);
     return result_code;
 }

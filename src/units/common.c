@@ -66,28 +66,6 @@ int inf_or_nan(matrix_t *A) {
     return result_code;
 }
 
-// Определитель для небольших матриц
-double calc_determinant1_2_3(matrix_t *A) {
-    double det;
-    if (A->rows == 1) {
-        det = A->matrix[0][0];
-    }
-    else if (A->rows == 2) {
-        det = A->matrix[0][0] * A->matrix[1][1] - \
-              A->matrix[0][1] * A->matrix[1][0];
-    }
-    else if (A->rows == 3) {
-        // по правилу треугольника (Саррюса)
-        det = (A->matrix[0][0] * A->matrix[1][1] * A->matrix[2][2] + \
-               A->matrix[0][1] * A->matrix[1][2] * A->matrix[2][0] + \
-               A->matrix[0][2] * A->matrix[1][0] * A->matrix[2][1])- \
-              (A->matrix[0][2] * A->matrix[1][1] * A->matrix[2][0] + \
-               A->matrix[0][0] * A->matrix[1][2] * A->matrix[2][1] + \
-               A->matrix[0][1] * A->matrix[1][0] * A->matrix[2][2]);
-    }
-    return det;
-}
-
 // Создает новую матрицу n-1. Вырезаем из исходной указанный row, column
 int remove_row_column(matrix_t *A, int i, int j, matrix_t *M) {
     int result_code = OK;
