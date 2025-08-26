@@ -11,20 +11,6 @@
 #define SUCCESS 1
 #define FAILURE 0
 
-// для заполнения матриц значениями.
-#define FILL_MATRIX(mat, ...) \
-    do { \
-        double temp[] = __VA_ARGS__; \
-        int index = 0; \
-        for (int x = 0; x < (mat).rows; x++) { \
-            for (int y = 0; y < (mat).columns; y++) { \
-                if (index < sizeof(temp)/sizeof(temp[0])) { \
-                    (mat).matrix[x][y] = temp[index++]; \
-                } \
-            } \
-        } \
-    } while (0)
-
 typedef struct matrix_struct {
     double** matrix;
     int rows;
@@ -73,6 +59,8 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result);
 // Вспомогательные функции
 void print_matrix(matrix_t *A, int dec);
 int incorrect_matrix(matrix_t *A);
+int incorrect_result(matrix_t *A);
+int is_zero(double x);
 int not_equal_size(matrix_t *A, matrix_t *B);
 int equal_to_6_decimal(double a, double b);
 int inf_or_nan(matrix_t *A);

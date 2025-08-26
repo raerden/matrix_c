@@ -20,7 +20,7 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
 
 // Транспонирование матрицы
 int s21_transpose(matrix_t *A, matrix_t *result) {
-    if (incorrect_matrix(A) || result == NULL) 
+    if (incorrect_matrix(A) || incorrect_result(result)) 
         return INCORRECT_MATRIX;
 
     int result_code = OK;

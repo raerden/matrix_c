@@ -2,7 +2,7 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
-GCOV_FLAGS = -fprofile-arcs -ftest-coverage
+GCOV_FLAGS = -D TEST_MEMORY_FAILURE -fprofile-arcs -ftest-coverage
 CHECK_FLAGS = -lcheck -lm -lpthread
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Linux)
@@ -21,7 +21,8 @@ TEST_EXEC = tests_matrix
 
 OBJ_DIR = obj
 OBJ = $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC))
-OBJ_TESTS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_TESTS))
+OBJ_TESTS1 = $(patsubst %.c, $(OBJ_DIR)/%-test.o, $(SRC))
+OBJ_TESTS2 = $(patsubst %.c, $(OBJ_DIR)/%-test.o, $(SRC_TESTS))
 GCOV_DIR = gcov_report
 REPORT_PATH = $(GCOV_DIR)/report/
 
@@ -33,13 +34,18 @@ s21_matrix.a: $(OBJ)
 	@echo "*\c";
 	@ranlib $@
 
-$(TEST_EXEC): $(OBJ) $(OBJ_TESTS)
-	@$(CC) $(CFLAGS) -o $@ $^ $(CHECK_FLAGS)
+$(TEST_EXEC): $(OBJ_TESTS1) $(OBJ_TESTS2)
+	@$(CC) $(CFLAGS) -D TEST_MEMORY_FAILURE -o $@ $^ $(CHECK_FLAGS)
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(@D)
 	@echo "*\c";
 	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%-test.o: %.c
+	@mkdir -p $(@D)
+	@echo "*\c";
+	@$(CC) $(CFLAGS) -D TEST_MEMORY_FAILURE -c $< -o $@
 
 buildtest: all $(TEST_EXEC)
 

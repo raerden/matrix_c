@@ -32,16 +32,24 @@ void print_matrix(matrix_t *A, int dec) {
     printf("\n");
 }
 
-int not_equal_size(matrix_t *A, matrix_t *B) {
-    return A->rows != B->rows || A->columns != B->columns;
-}
-
 int incorrect_matrix(matrix_t *A) {
     int result_code = (A == NULL || A->matrix == NULL || A->rows <= 0 || A->columns <= 0);
     for (int i = 0; i < A->rows && result_code == 0; i++)
         if (A->matrix[i] == NULL)
             result_code = 1;
     return result_code;
+}
+
+int incorrect_result(matrix_t *A) {
+    return (A == NULL || A->matrix == NULL);
+}
+
+int is_zero(double x) {
+    return fabs(x) < 1e-6;
+}
+
+int not_equal_size(matrix_t *A, matrix_t *B) {
+    return A->rows != B->rows || A->columns != B->columns;
 }
 
 double trunc_to_6(double a) {

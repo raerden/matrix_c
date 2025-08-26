@@ -40,7 +40,7 @@ int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result){
 
 // Умножение матрицы на число
 int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
-    if (incorrect_matrix(A) || result == NULL) return INCORRECT_MATRIX;
+    if (incorrect_matrix(A) || incorrect_result(result)) return INCORRECT_MATRIX;
     
     int result_code = OK;
     if (inf_or_nan(A)) {
@@ -59,7 +59,7 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
 
 // Умножение матриц
 int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
-    if (incorrect_matrix(A) || incorrect_matrix(B) || result == NULL) 
+    if (incorrect_matrix(A) || incorrect_matrix(B) || incorrect_result(result)) 
         return INCORRECT_MATRIX;
 
     int result_code = OK;

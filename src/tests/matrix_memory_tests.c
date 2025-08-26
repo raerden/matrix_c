@@ -1,10 +1,8 @@
-#include <check.h>
 #include "tests_matrix.h"
 
 START_TEST(create_matrix_01) {
     int res = 0;
     matrix_t A = {0};
-
     res = s21_create_matrix(1, 1, &A);
     ck_assert_int_eq(res, OK);
     s21_remove_matrix(&A);
@@ -42,6 +40,28 @@ START_TEST(create_matrix_04) {
 }
 END_TEST
 
+#ifdef TEST_MEMORY_FAILURE
+START_TEST(create_matrix_05) {
+    int res = 0;
+    matrix_t A = {0};
+    res = s21_create_matrix(666, 1, &A);
+    ck_assert_int_eq(res, INCORRECT_MATRIX);
+    s21_remove_matrix(&A);
+}
+END_TEST
+
+START_TEST(create_matrix_06) {
+    int res = 0;
+    matrix_t A = {0};
+    res = s21_create_matrix(777, 1, &A);
+    ck_assert_int_eq(res, INCORRECT_MATRIX);
+    s21_remove_matrix(&A);
+}
+END_TEST
+#endif
+
+
+
 START_TEST(s21_remove_matrix_01) {
   int res = 0;
   matrix_t A = {0};
@@ -63,6 +83,10 @@ Suite *suite_create_matrix(void) {
     tcase_add_test(tc, create_matrix_02);
     tcase_add_test(tc, create_matrix_03);
     tcase_add_test(tc, create_matrix_04);
+#ifdef TEST_MEMORY_FAILURE
+    tcase_add_test(tc, create_matrix_05);
+    tcase_add_test(tc, create_matrix_06);
+#endif
     tcase_add_test(tc, s21_remove_matrix_01);
 
     suite_add_tcase(s, tc);

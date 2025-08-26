@@ -1,4 +1,3 @@
-#include <check.h>
 #include "tests_matrix.h"
 
 START_TEST(sum_matrix) {
