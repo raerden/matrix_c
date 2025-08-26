@@ -7,9 +7,9 @@ CHECK_FLAGS = -lcheck -lm -lpthread
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Linux)
     CHECK_FLAGS += -lsubunit
-	OPEN_CMD:=xdg-open
+# 	OPEN_CMD:=xdg-open
 else ifeq ($(shell uname), Darwin)
-	OPEN_CMD:=open
+# 	OPEN_CMD:=open
 endif
 
 SRC = $(wildcard units/*.c)

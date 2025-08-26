@@ -59,7 +59,6 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result);
 // Вспомогательные функции
 void print_matrix(matrix_t *A, int dec);
 int incorrect_matrix(matrix_t *A);
-int incorrect_result(matrix_t *A);
 int is_zero(double x);
 int not_equal_size(matrix_t *A, matrix_t *B);
 int equal_to_6_decimal(double a, double b);

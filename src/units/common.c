@@ -40,10 +40,6 @@ int incorrect_matrix(matrix_t *A) {
     return result_code;
 }
 
-int incorrect_result(matrix_t *A) {
-    return (A == NULL || A->matrix == NULL);
-}
-
 int is_zero(double x) {
     return fabs(x) < 1e-6;
 }
