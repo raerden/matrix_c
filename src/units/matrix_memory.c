@@ -59,7 +59,6 @@ void s21_remove_matrix(matrix_t *A) {
     if (A == NULL) {
         return;
     }
-
     if (A->matrix != NULL) {
         for (int i = 0; i < A->rows; i++) {
             if (A->matrix[i] != NULL) {

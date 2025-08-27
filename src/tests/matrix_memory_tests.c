@@ -73,6 +73,11 @@ START_TEST(s21_remove_matrix_01) {
 }
 END_TEST
 
+START_TEST(s21_remove_matrix_02) {
+  s21_remove_matrix(NULL);
+}
+END_TEST
+
 
 
 Suite *suite_create_matrix(void) {
@@ -88,6 +93,7 @@ Suite *suite_create_matrix(void) {
     tcase_add_test(tc, create_matrix_06);
 #endif
     tcase_add_test(tc, s21_remove_matrix_01);
+    tcase_add_test(tc, s21_remove_matrix_02);
 
     suite_add_tcase(s, tc);
     return s;

@@ -369,6 +369,7 @@ START_TEST(test_transpose_01) {
     // s21_create_matrix(2, 2, &A);
     ck_assert_int_eq(s21_transpose(&A, &B), INCORRECT_MATRIX);     
     s21_remove_matrix(&A);
+    s21_remove_matrix(&B);
 }
 END_TEST
 
@@ -386,6 +387,8 @@ START_TEST(test_transpose_02) {
     ck_assert_int_eq(s21_transpose(&A, &res), OK);
     ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
     s21_remove_matrix(&A);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
 }
 END_TEST
 
@@ -403,6 +406,8 @@ START_TEST(test_transpose_03) {
     ck_assert_int_eq(s21_transpose(&A, &res), OK);
     ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
     s21_remove_matrix(&A);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
 }
 END_TEST
 
@@ -420,9 +425,88 @@ START_TEST(test_transpose_04) {
     ck_assert_int_eq(s21_transpose(&A, &res), OK);
     ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
     s21_remove_matrix(&A);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
 }
 END_TEST
 
+START_TEST(test_calc_complements_01) {
+    matrix_t A = {0};
+    matrix_t B = {0};
+
+    ck_assert_int_eq(s21_calc_complements(&A, &B), INCORRECT_MATRIX);     
+    s21_remove_matrix(&A);
+}
+END_TEST
+
+START_TEST(test_calc_complements_02) {
+    matrix_t A = {0};
+    matrix_t B = {0};
+
+    s21_create_matrix(1, 3, &A);
+
+    FILL_MATRIX(A, {1, 2, 3});
+    ck_assert_int_eq(s21_calc_complements(&A, &B), CALCULATION_ERROR);     
+    s21_remove_matrix(&A);
+}
+END_TEST
+
+START_TEST(test_calc_complements_03) {
+    matrix_t A = {0};
+    matrix_t res = {0};
+
+    s21_create_matrix(1, 1, &A);
+    FILL_MATRIX(A, {4});
+
+    matrix_t check = {0};
+    s21_create_matrix(1, 1, &check);
+    FILL_MATRIX(check, {4});
+
+    ck_assert_int_eq(s21_calc_complements(&A, &res), OK);
+    ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
+    s21_remove_matrix(&A);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
+}
+END_TEST
+
+START_TEST(test_calc_complements_04) {
+    matrix_t A = {0};
+    matrix_t res = {0};
+
+    s21_create_matrix(2, 2, &A);
+    FILL_MATRIX(A, {1, 2, 3, 4});
+
+    matrix_t check = {0};
+    s21_create_matrix(2, 2, &check);
+    FILL_MATRIX(check, {4, -3, -2, 1});
+
+    ck_assert_int_eq(s21_calc_complements(&A, &res), OK);
+    ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
+    s21_remove_matrix(&A);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
+}
+END_TEST
+
+START_TEST(test_calc_complements_05) {
+    matrix_t A = {0};
+    matrix_t res = {0};
+
+    s21_create_matrix(3, 3, &A);
+    FILL_MATRIX(A, {1, 2, 3, 0, 4, 2, 5, 2, 1});
+
+    matrix_t check = {0};
+    s21_create_matrix(3, 3, &check);
+    FILL_MATRIX(check, {0, 10, -20, 4, -14, 8, -8, -2, 4});
+
+    ck_assert_int_eq(s21_calc_complements(&A, &res), OK);
+    ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
+    s21_remove_matrix(&A);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
+}
+END_TEST
 
 Suite *suite_determinant(void) {
     Suite *s = suite_create("suite_determinant");
@@ -474,3 +558,18 @@ Suite *suite_transpose_matrix(void) {
     return s;
 }
 
+
+Suite *suite_calc_complements(void) {
+    Suite *s = suite_create("suite_calc_complements");
+    TCase *tc = tcase_create("case_calc_complements");
+
+    tcase_add_test(tc, test_calc_complements_01);
+    tcase_add_test(tc, test_calc_complements_02);
+    tcase_add_test(tc, test_calc_complements_03);
+    tcase_add_test(tc, test_calc_complements_04);
+    tcase_add_test(tc, test_calc_complements_05);
+
+
+    suite_add_tcase(s, tc);
+    return s;
+}
