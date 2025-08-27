@@ -264,7 +264,9 @@ START_TEST(mult_matrix_ok3) {
     FILL_MATRIX(A, {1.01, 2.31, 3.67, 4.04, 5.56, 6.66, 7.43, 8.12, 9.22});
     FILL_MATRIX(B, {9.22, 8.12, 7.43, 6.66, 5.56, 4.04, 3.67, 2.31, 1.01});
     
-    FILL_MATRIX(check, {38.16, 29.52, 20.54, 98.72, 79.1, 59.2, 156.42, 126.77, 97.32});
+    FILL_MATRIX(check, {38.1657, 29.5225, 20.5434, 
+        98.7206, 79.103, 59.2062,
+         156.4212, 126.777, 97.3219});
 
 
     matrix_t res = {0};
@@ -278,6 +280,51 @@ START_TEST(mult_matrix_ok3) {
 }
 END_TEST
 
+START_TEST(mult_matrix_ok4) {
+    matrix_t A = {0};
+    s21_create_matrix(3, 1, &A);
+    matrix_t B = {0};
+    s21_create_matrix(1, 3, &B);
+    matrix_t check = {0};
+    s21_create_matrix(3, 3, &check);
+
+    FILL_MATRIX(A, {4, 5, 6});
+    FILL_MATRIX(B, {1, 2, 3});
+    FILL_MATRIX(check, {4, 8, 12, 5, 10, 15, 6, 12, 18});
+
+    matrix_t res = {0};
+    ck_assert_int_eq(s21_mult_matrix(&A, &B, &res), OK);
+    ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
+
+    s21_remove_matrix(&A);
+    s21_remove_matrix(&B);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
+}
+END_TEST
+
+START_TEST(mult_matrix_ok5) {
+    matrix_t A = {0};
+    s21_create_matrix(1, 3, &A);
+    matrix_t B = {0};
+    s21_create_matrix(3, 1, &B);
+    matrix_t check = {0};
+    s21_create_matrix(1, 1, &check);
+
+    FILL_MATRIX(A, {1, 2, 3});
+    FILL_MATRIX(B, {4, 5, 6});
+    FILL_MATRIX(check, {32});
+
+    matrix_t res = {0};
+    ck_assert_int_eq(s21_mult_matrix(&A, &B, &res), OK);
+    ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
+
+    s21_remove_matrix(&A);
+    s21_remove_matrix(&B);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
+}
+END_TEST
 
 Suite *suite_sum_matrix(void) {
     Suite *s = suite_create("suite_sum_matrix");
@@ -296,6 +343,8 @@ Suite *suite_sum_matrix(void) {
     tcase_add_test(tc, mult_matrix_ok);
     tcase_add_test(tc, mult_matrix_ok2);
     tcase_add_test(tc, mult_matrix_ok3);
+    tcase_add_test(tc, mult_matrix_ok4);
+    tcase_add_test(tc, mult_matrix_ok5);
 
 
     suite_add_tcase(s, tc);

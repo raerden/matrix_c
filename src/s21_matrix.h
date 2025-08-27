@@ -63,6 +63,5 @@ int is_zero(double x);
 int not_equal_size(matrix_t *A, matrix_t *B);
 int equal_to_6_decimal(double a, double b);
 int inf_or_nan(matrix_t *A);
-int remove_row_column(matrix_t *A, int i, int j, matrix_t *M);
 
 #endif

@@ -69,21 +69,3 @@ int inf_or_nan(matrix_t *A) {
     }
     return result_code;
 }
-
-// Создает новую матрицу n-1. Вырезаем из исходной указанный row, column
-int remove_row_column(matrix_t *A, int i, int j, matrix_t *M) {
-    int result_code = OK;
-    result_code = s21_create_matrix(A->rows - 1, A->rows - 1, M);
-    int iM = 0;
-    for (int x = 0; result_code == OK && x < A->rows; x++) {
-        int jM = 0;
-        for (int y = 0; y < A->columns && x != i; y++) {
-            if (y != j) {
-                M->matrix[iM][jM] = A->matrix[x][y];
-                jM++;
-            }
-        }
-        if (x != i) iM++;
-    }
-    return result_code;
-}

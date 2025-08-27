@@ -361,6 +361,69 @@ START_TEST(test_eq_matrix_07) {
 }
 END_TEST
 
+
+START_TEST(test_transpose_01) {
+    matrix_t A = {0};
+    matrix_t B = {0};
+
+    // s21_create_matrix(2, 2, &A);
+    ck_assert_int_eq(s21_transpose(&A, &B), INCORRECT_MATRIX);     
+    s21_remove_matrix(&A);
+}
+END_TEST
+
+START_TEST(test_transpose_02) {
+    matrix_t A = {0};
+    matrix_t res = {0};
+
+    s21_create_matrix(3, 1, &A);
+    FILL_MATRIX(A, {1, 2, 3});
+
+    matrix_t check = {0};
+    s21_create_matrix(1, 3, &check);
+    FILL_MATRIX(check, {1, 2, 3});
+
+    ck_assert_int_eq(s21_transpose(&A, &res), OK);
+    ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
+    s21_remove_matrix(&A);
+}
+END_TEST
+
+START_TEST(test_transpose_03) {
+    matrix_t A = {0};
+    matrix_t res = {0};
+
+    s21_create_matrix(3, 3, &A);
+    FILL_MATRIX(A, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+
+    matrix_t check = {0};
+    s21_create_matrix(3, 3, &check);
+    FILL_MATRIX(check, {1, 4, 7, 2, 5, 8, 3, 6, 9 });
+
+    ck_assert_int_eq(s21_transpose(&A, &res), OK);
+    ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
+    s21_remove_matrix(&A);
+}
+END_TEST
+
+START_TEST(test_transpose_04) {
+    matrix_t A = {0};
+    matrix_t res = {0};
+
+    s21_create_matrix(1, 3, &A);
+    FILL_MATRIX(A, {1, 2, 3});
+
+    matrix_t check = {0};
+    s21_create_matrix(3, 1, &check);
+    FILL_MATRIX(check, {1, 2, 3});
+
+    ck_assert_int_eq(s21_transpose(&A, &res), OK);
+    ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
+    s21_remove_matrix(&A);
+}
+END_TEST
+
+
 Suite *suite_determinant(void) {
     Suite *s = suite_create("suite_determinant");
     TCase *tc = tcase_create("case_determinant");
@@ -396,3 +459,18 @@ Suite *suite_eq_matrix(void) {
     suite_add_tcase(s, tc);
     return s;
 }
+
+Suite *suite_transpose_matrix(void) {
+    Suite *s = suite_create("suite_transpose_matrix");
+    TCase *tc = tcase_create("case_transpose_matrix");
+
+    tcase_add_test(tc, test_transpose_01);
+    tcase_add_test(tc, test_transpose_02);
+    tcase_add_test(tc, test_transpose_03);
+    tcase_add_test(tc, test_transpose_04);
+
+
+    suite_add_tcase(s, tc);
+    return s;
+}
+

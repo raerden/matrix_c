@@ -27,7 +27,7 @@ int main(void) {
     //                        suite_determinant(),      suite_inverse_matrix(),
     //                        suite_matrix_gather(),    NULL};
     Suite *list_cases[] = {suite_create_matrix(), suite_sum_matrix(), 
-                           suite_eq_matrix(), 
+                           suite_eq_matrix(), suite_transpose_matrix(),
                         suite_determinant(),
                         NULL,
     };

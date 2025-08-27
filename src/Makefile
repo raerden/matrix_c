@@ -7,9 +7,9 @@ CHECK_FLAGS = -lcheck -lm -lpthread
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Linux)
     CHECK_FLAGS += -lsubunit
-# 	OPEN_CMD:=xdg-open
+	OPEN_CMD:=xdg-open
 else ifeq ($(shell uname), Darwin)
-# 	OPEN_CMD:=open
+	OPEN_CMD:=open
 endif
 
 SRC = $(wildcard units/*.c)
@@ -67,7 +67,7 @@ gcov_report: clean
 	@echo "Откройте в браузере:"
 	@echo "file://$(CURDIR)/$(REPORT_PATH)index.html"
 	@echo "=============================================="
-	$(OPEN_CMD) ./$(REPORT_PATH)index.html
+# 	$(OPEN_CMD) ./$(REPORT_PATH)index.html
 
 clean:
 	@rm -rf $(GCOV_DIR) $(TEST_EXEC) 
