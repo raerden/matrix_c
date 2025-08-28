@@ -1,36 +1,4 @@
 #include "../s21_matrix.h"
-#include <string.h>
-
-void print_matrix(matrix_t *A, int dec) {
-    if (A == NULL || A->matrix == NULL) {
-        printf("print_matrix: Matrix is NULL\n");
-        return;
-    }
-
-    unsigned max_value_length = 0;
-    for (int i = 0; i < A->rows; i++) {
-        for (int j = 0; j < A->columns; j++) {
-            if (max_value_length < A->matrix[i][j]) {
-                if (dec)
-                    max_value_length = (unsigned)snprintf(NULL, 0, "%.0lf", A->matrix[i][j]);
-                else 
-                    max_value_length = (unsigned)snprintf(NULL, 0, "%.7lf", A->matrix[i][j]);
-            }
-        }
-    }
-
-    printf("    Matrix (%d x %d):\n", A->rows, A->columns);
-    for (int i = 0; i < A->rows; i++) {
-        for (int j = 0; j < A->columns; j++) {
-            if (dec)
-                printf("%*.0lf ", max_value_length, A->matrix[i][j]);
-            else
-                printf("%*.7lf ", max_value_length + 1, A->matrix[i][j]);
-        }
-        printf("\n");
-    }
-    printf("\n");
-}
 
 int incorrect_matrix(matrix_t *A) {
     int result_code = (A == NULL || A->matrix == NULL || A->rows <= 0 || A->columns <= 0);
@@ -41,7 +9,7 @@ int incorrect_matrix(matrix_t *A) {
 }
 
 int is_zero(double x) {
-    return fabs(x) < 1e-6;
+    return fabs(x) < EPSILON_5E_07;
 }
 
 int not_equal_size(matrix_t *A, matrix_t *B) {

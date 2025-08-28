@@ -1,5 +1,4 @@
 #This project made by woodsjul
-
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 GCOV_FLAGS = -D TEST_MEMORY_FAILURE -fprofile-arcs -ftest-coverage
@@ -67,7 +66,7 @@ gcov_report: clean
 	@echo "Откройте в браузере:"
 	@echo "file://$(CURDIR)/$(REPORT_PATH)index.html"
 	@echo "=============================================="
-# 	$(OPEN_CMD) ./$(REPORT_PATH)index.html
+	$(OPEN_CMD) ./$(REPORT_PATH)index.html
 
 clean:
 	@rm -rf $(GCOV_DIR) $(TEST_EXEC) 
@@ -87,14 +86,5 @@ leaks: buildtest
 
 valgrind: buildtest
 	CK_FORK=no valgrind --vgdb=no --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./$(TEST_EXEC)
-
-
-run: all
-	@rm -rf ./a.out
-	@gcc -Werror work.c s21_matrix.a -lm
-	@./a.out
-
-mem: run
-	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./a.out
 
 .PHONY: all clean test gcov_report

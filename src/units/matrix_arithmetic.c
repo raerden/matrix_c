@@ -78,7 +78,5 @@ int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
         }
     }
 
-    if (result_code == OK)
-        result_code = inf_or_nan(result) ? CALCULATION_ERROR : OK; 
     return result_code;
 }

@@ -133,19 +133,14 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
     double det = 0;
     if (result_code == OK) 
         result_code = s21_determinant(A, &det);
-    // printf("det=%lf", det);
     if (result_code != OK || is_zero(det))
         result_code = CALCULATION_ERROR;
     if (result_code == OK) {
         matrix_t complements = {0};
         matrix_t complements_t = {0};
         result_code = s21_calc_complements(A, &complements);
-        // printf("Matrix complements\n");
-        // print_matrix(&complements, 0);
         if (result_code == OK)
             result_code = s21_transpose(&complements, &complements_t);
-        // printf("Matrix transpose\n");
-        // print_matrix(&complements_t, 0);
         if (result_code == OK)
             result_code = s21_mult_number(&complements_t, 1.0 / det, result);
         s21_remove_matrix(&complements);
