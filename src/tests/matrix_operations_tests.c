@@ -460,7 +460,7 @@ START_TEST(test_calc_complements_03) {
 
     matrix_t check = {0};
     s21_create_matrix(1, 1, &check);
-    FILL_MATRIX(check, {4});
+    FILL_MATRIX(check, {1});
 
     ck_assert_int_eq(s21_calc_complements(&A, &res), OK);
     ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
@@ -505,6 +505,90 @@ START_TEST(test_calc_complements_05) {
     s21_remove_matrix(&A);
     s21_remove_matrix(&res);
     s21_remove_matrix(&check);
+}
+END_TEST
+
+
+
+START_TEST(test_inverse_matrix_01) {
+    matrix_t A = {0};
+    matrix_t B = {0};
+
+    ck_assert_int_eq(s21_inverse_matrix(&A, &B), INCORRECT_MATRIX);     
+    s21_remove_matrix(&A);
+}
+END_TEST
+
+START_TEST(test_inverse_matrix_02) {
+    matrix_t A = {0};
+    matrix_t B = {0};
+
+    s21_create_matrix(1, 3, &A);
+
+    FILL_MATRIX(A, {1, 2, 3});
+    ck_assert_int_eq(s21_inverse_matrix(&A, &B), CALCULATION_ERROR);     
+    s21_remove_matrix(&A);
+}
+END_TEST
+
+START_TEST(test_inverse_matrix_03) {
+    matrix_t A = {0};
+    matrix_t res = {0};
+
+    s21_create_matrix(1, 1, &A);
+    FILL_MATRIX(A, {2});
+
+    matrix_t check = {0};
+    s21_create_matrix(1, 1, &check);
+    FILL_MATRIX(check, {0.5});
+
+    ck_assert_int_eq(s21_inverse_matrix(&A, &res), OK);
+    ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
+    s21_remove_matrix(&A);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
+}
+END_TEST
+
+START_TEST(test_inverse_matrix_04) {
+    matrix_t A = {0};
+    matrix_t res = {0};
+
+    s21_create_matrix(3, 3, &A);
+    FILL_MATRIX(A, {2, 5, 7, 6, 3, 4, 5, -2, -3});
+
+    matrix_t check = {0};
+    s21_create_matrix(3, 3, &check);
+    FILL_MATRIX(check, {1, -1, 1, -38, 41, -34, 27, -29, 24});
+
+    ck_assert_int_eq(s21_inverse_matrix(&A, &res), OK);
+    ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
+    s21_remove_matrix(&A);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
+}
+END_TEST
+
+START_TEST(test_inverse_matrix_05) {
+    matrix_t A = {0};
+    matrix_t res = {0};
+
+    s21_create_matrix(3, 3, &A);
+    FILL_MATRIX(A, {22, 51, 17, 6.34, 31, 4.234, 1, -1, 3});
+
+    matrix_t check = {0};
+    matrix_t mul_one = {0};
+    s21_create_matrix(3, 3, &check);
+    FILL_MATRIX(check, {1, 0, 0, 0, 1, 0, 0, 0, 1});
+
+    ck_assert_int_eq(s21_inverse_matrix(&A, &res), OK);
+    s21_mult_matrix(&A,&res, &mul_one);
+    ck_assert_int_eq(s21_eq_matrix(&check, &mul_one), SUCCESS);
+
+    s21_remove_matrix(&A);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
+    s21_remove_matrix(&mul_one);
 }
 END_TEST
 
@@ -568,6 +652,21 @@ Suite *suite_calc_complements(void) {
     tcase_add_test(tc, test_calc_complements_03);
     tcase_add_test(tc, test_calc_complements_04);
     tcase_add_test(tc, test_calc_complements_05);
+
+
+    suite_add_tcase(s, tc);
+    return s;
+}
+
+Suite *suite_inverse_matrix(void) {
+    Suite *s = suite_create("suite_inverse_matrix");
+    TCase *tc = tcase_create("case_inverse_matrix");
+
+    tcase_add_test(tc, test_inverse_matrix_01);
+    tcase_add_test(tc, test_inverse_matrix_02);
+    tcase_add_test(tc, test_inverse_matrix_03);
+    tcase_add_test(tc, test_inverse_matrix_04);
+    tcase_add_test(tc, test_inverse_matrix_05);
 
 
     suite_add_tcase(s, tc);

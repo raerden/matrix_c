@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define SCALE_FACTOR_6 1e6 // для домножения double до целого числа с точностью 6 знаков после запятой
-#define ROUNDING_CORRECTION 0.0000005  // Половина от 1e-6
+#define SCALE_FACTOR_6B 1E+06
+#define EPSILON_5E_07 5E-07
 #define SUCCESS 1
 #define FAILURE 0
 

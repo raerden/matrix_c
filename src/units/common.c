@@ -14,18 +14,18 @@ void print_matrix(matrix_t *A, int dec) {
                 if (dec)
                     max_value_length = (unsigned)snprintf(NULL, 0, "%.0lf", A->matrix[i][j]);
                 else 
-                    max_value_length = (unsigned)snprintf(NULL, 0, "%lf", A->matrix[i][j]);
+                    max_value_length = (unsigned)snprintf(NULL, 0, "%.7lf", A->matrix[i][j]);
             }
         }
     }
 
-    printf("    Matrix (%d i %d):\n", A->rows, A->columns);
+    printf("    Matrix (%d x %d):\n", A->rows, A->columns);
     for (int i = 0; i < A->rows; i++) {
         for (int j = 0; j < A->columns; j++) {
             if (dec)
                 printf("%*.0lf ", max_value_length, A->matrix[i][j]);
             else
-                printf("%*lf ", max_value_length, A->matrix[i][j]);
+                printf("%*.7lf ", max_value_length + 1, A->matrix[i][j]);
         }
         printf("\n");
     }
@@ -48,12 +48,14 @@ int not_equal_size(matrix_t *A, matrix_t *B) {
     return A->rows != B->rows || A->columns != B->columns;
 }
 
-double trunc_to_6(double a) {
-    return trunc(fabs(a) * SCALE_FACTOR_6 + ROUNDING_CORRECTION);
-}
-
 int equal_to_6_decimal(double a, double b) {
-    return trunc_to_6(a) == trunc_to_6(b);
+    int res = trunc(a * SCALE_FACTOR_6B) == trunc(b * SCALE_FACTOR_6B);
+    if (!res) {
+        double diff = a - b;
+        if (b > a) diff = b - a;
+        res = diff <= EPSILON_5E_07 ? SUCCESS : FAILURE;
+    }
+    return res;
 }
 
 int inf_or_nan(matrix_t *A) {

@@ -27,7 +27,7 @@ Suite *suite_matrix_gather(void);
 Suite *suite_create_matrix(void);
 Suite *suite_transpose_matrix(void);
 Suite *suite_eq_matrix(void);
-Suite *suite_sum_matrix(void);
+Suite *suite_arithmetic_matrix(void);
 Suite *suite_sub_matrix(void);
 Suite *suite_mult_matrix(void);
 Suite *suite_mult_number_matrix(void);

@@ -61,7 +61,7 @@ gcov_report: clean
 	lcov -t "$(GCOV_DIR)/$(TEST_EXEC)" -o $(GCOV_DIR)/coverage.info -c -d .
 	lcov --remove $(GCOV_DIR)/coverage.info "*/tests/*" -o $(GCOV_DIR)/coverage.info --ignore-errors unused
 	genhtml -o $(REPORT_PATH) $(GCOV_DIR)/coverage.info
-	@echo "<table width="100%"><td class=\"title\" style=\"color: lightblue; -webkit-text-stroke: 1px black;\">#Project was made by woodsjul</td></table>" >> $(REPORT_PATH)index.html
+	echo "<table width="100%"><td class=\"title\" style=\"color: lightblue; -webkit-text-stroke: 1px black;\">#Project was made by woodsjul</td></table>" >> $(REPORT_PATH)index.html
 	@echo "=============================================="
 	@echo "Отчёт покрытия успешно сгенерирован!"
 	@echo "Откройте в браузере:"

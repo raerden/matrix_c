@@ -58,6 +58,41 @@ START_TEST(sub_matrix) {
 }
 END_TEST
 
+START_TEST(sum_sub_matrix) {
+    int rows = rand() % 100 + 1;
+    int cols = rand() % 100 + 1;
+    matrix_t A = {0};
+    s21_create_matrix(rows, cols, &A);
+    matrix_t check = {0};
+    s21_create_matrix(rows, cols, &check);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            A.matrix[i][j] = get_rand(MIN_DOUBLE, MAX_DOUBLE);
+            check.matrix[i][j] = A.matrix[i][j] + A.matrix[i][j];
+        }
+    }
+
+    matrix_t res = {0};
+    matrix_t A5 = {0};
+    matrix_t A3 = {0};
+
+// s21_mult_number(&A, 5.0, &A5);
+// s21_mult_number(&A, 3.0, &A3);
+
+    ck_assert_int_eq(s21_mult_number(&A, 5.0, &A5), OK);
+    ck_assert_int_eq(s21_mult_number(&A, 3.0, &A3), OK);
+    ck_assert_int_eq(s21_sub_matrix(&A5, &A3, &res), OK);
+    ck_assert_int_eq(s21_eq_matrix(&check, &res), SUCCESS);
+
+    s21_remove_matrix(&A);
+    s21_remove_matrix(&A5);
+    s21_remove_matrix(&A3);
+    s21_remove_matrix(&res);
+    s21_remove_matrix(&check);
+}
+END_TEST
+
 START_TEST(sum_matrix_error1) {
     matrix_t A = {0};
     matrix_t B = {0};
@@ -326,12 +361,13 @@ START_TEST(mult_matrix_ok5) {
 }
 END_TEST
 
-Suite *suite_sum_matrix(void) {
-    Suite *s = suite_create("suite_sum_matrix");
-    TCase *tc = tcase_create("case_sum_matrix");
+Suite *suite_arithmetic_matrix(void) {
+    Suite *s = suite_create("suite_arithmetic_matrix");
+    TCase *tc = tcase_create("case_arithmetic_matrix");
 
     tcase_add_loop_test(tc, sum_matrix, 0, 10);
     tcase_add_loop_test(tc, sub_matrix, 0, 10);
+    tcase_add_loop_test(tc, sum_sub_matrix, 0, 10);
     tcase_add_test(tc, sum_matrix_error1);
     tcase_add_test(tc, sum_matrix_error2);
     tcase_add_test(tc, sum_matrix_inf);
