@@ -12,16 +12,12 @@
 #define FAILURE 0
 
 typedef struct matrix_struct {
-    double** matrix;
-    int rows;
-    int columns;
+  double **matrix;
+  int rows;
+  int columns;
 } matrix_t;
 
-typedef enum {
-  OK = 0,
-  INCORRECT_MATRIX = 1,
-  CALCULATION_ERROR = 2
-} res_code;
+typedef enum { OK = 0, INCORRECT_MATRIX = 1, CALCULATION_ERROR = 2 } res_code;
 
 int s21_create_matrix(int rows, int columns, matrix_t *result);
 void s21_remove_matrix(matrix_t *A);

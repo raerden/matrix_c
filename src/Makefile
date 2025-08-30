@@ -76,10 +76,12 @@ cpptest:
 	cppcheck --enable=all --suppress=missingIncludeSystem *.h
 	cppcheck --enable=all --suppress=missingIncludeSystem *.c units/*.c
 
-clang:
+clang-check:
 	cp ../materials/linters/.clang-format .
-	clang-format -n *.h *.c units/*.c
-	clang-format -i *.h *.c units/*.c
+	clang-format -n *.h tests/*.c tests/*.h units/*.c
+
+clang-fix:
+	clang-format -i *.h tests/*.c tests/*.h units/*.c
 
 leaks: buildtest
 	leaks -atExit -- ./$(TEST_EXEC) 
